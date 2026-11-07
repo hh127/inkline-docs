@@ -12,6 +12,7 @@
  */
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { join, relative, dirname, resolve, extname, posix } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
@@ -29,7 +30,6 @@ const SENSITIVE = [
   ['反混淆', '合规红线：不描述逆向过程'],
   ['酷造价', '合规红线：不点名竞品'],
   ['D:\\github', '内部本机路径'],
-  ['access.log', '运行日志不入文档'],
   ['迁移缺口', '内部迁移台账'],
 ]
 
@@ -136,6 +136,16 @@ async function main() {
       if (size > 500 * 1024) errors.push(`${rel}: 图片 ${(size / 1024 / 1024).toFixed(1)} MB，超过 500 KB 上限`)
       else if (size > 300 * 1024) warnings.push(`${rel}: 图片 ${(size / 1024).toFixed(0)} KB，建议压缩到 300 KB 内`)
     }
+  }
+
+  // 日志文件不得入库（日志只用于排障，不随仓库分发）
+  try {
+    const trackedLogs = execFileSync('git', ['ls-files', '--', '*.log'], { cwd: ROOT, encoding: 'utf8' }).trim()
+    for (const f of trackedLogs.split(/\r?\n/).filter(Boolean)) {
+      errors.push(`${f}: 日志文件被 git 跟踪，请从版本库移除并加入 .gitignore`)
+    }
+  } catch {
+    // 非 git 仓库或未安装 git 时跳过
   }
 
   // 版本一致性
