@@ -1,0 +1,17 @@
+# 依赖与构建产物
+node_modules/
+docs/.vuepress/.cache/
+docs/.vuepress/.temp/
+docs/.vuepress/dist/
+docs/.vuepress/.vite-cache/
+*.tsbuildinfo
+
+# 日志与系统文件
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 编辑器
+.vscode/
+.idea/
