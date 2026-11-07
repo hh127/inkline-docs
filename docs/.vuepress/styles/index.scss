@@ -1,0 +1,38 @@
+/**
+ * 品牌样式覆盖
+ * 主色取自产品统计大屏的蓝色渐变，与软件内视觉保持一致。
+ */
+:root {
+  --vp-c-accent: #2563eb;
+  --vp-c-accent-bg: #2563eb;
+  --vp-c-accent-hover: #3b82f6;
+  --vp-c-accent-text: #ffffff;
+  --vp-c-accent-soft: rgb(37 99 235 / 14%);
+
+  --vp-sidebar-width: 19rem;
+}
+
+[data-theme='dark'] {
+  --vp-c-accent: #3b82f6;
+  --vp-c-accent-bg: #3b82f6;
+  --vp-c-accent-hover: #60a5fa;
+  --vp-c-accent-soft: rgb(59 130 246 / 18%);
+}
+
+// 首页 logo：主题默认按 280px 渲染，这里收敛到更稳的比例
+.vp-hero-image {
+  height: 180px;
+  width: auto;
+}
+
+@media (max-width: 719px) {
+  .vp-hero-image {
+    height: 140px;
+  }
+}
+
+// 表格在窄屏下允许横向滚动，避免内容溢出
+[data-theme] .vp-doc table {
+  display: block;
+  overflow-x: auto;
+}

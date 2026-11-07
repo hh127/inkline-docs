@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="智算墨斗 logo">
+  <rect width="128" height="128" rx="28" fill="#2563EB"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M30 92 L98 36"/>
+    <path d="M30 92 L46 92"/>
+    <path d="M60 68 L74 68"/>
+    <path d="M82 48 L96 48"/>
+  </g>
+  <circle cx="98" cy="36" r="7" fill="#FFFFFF"/>
+</svg>
