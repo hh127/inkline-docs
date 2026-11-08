@@ -38,7 +38,7 @@ WPS JS 加载项 4.67 ✅ ｜ Excel VBA 4.66 ❌（未迁移）
 4. 清洗完成会提示处理行数、填充次数、各类删除行数；
 5. 检查表头、特征列与数据行是否符合预期；不满意可用备份还原。
 
-## 开发者调用（纯函数）
+## 开发者调用（普通用户可跳过）
 
 ```js
 const res = ZSMD.GlodonCleaner.cleanGrid(matrix, {
@@ -52,13 +52,13 @@ const res = ZSMD.GlodonCleaner.cleanGrid(matrix, {
 //                  droppedSubtotal, droppedGldTitle, droppedEmpty, droppedBlank }
 ```
 
-`cleanGrid` 是纯函数：输入二维数组，输出结果与统计，不触碰宿主，Node 下可完整测试（53 条断言）。
+`cleanGrid` 是纯函数：给它一张二维表（数组）就返回清洗结果与统计，不需要打开 WPS，因此能在开发机上用 53 条自动化断言完整测试。普通用户无需关心，直接用 Ribbon 的「广联达清洗」即可。
 
 ## 参数与边界
 
 | 场景 | 行为 |
 | --- | --- |
-| 表里找不到「清单编码 / 项目名称」关键词 | 特征列兜底 `C` 列，表头按第 1 行处理 |
+| 表里找不到「清单编码 / 项目名称」关键词 | 改用 C 列作为保底特征列，表头按第 1 行处理 |
 | 纵向合并的 A 列序号 | 会被前向填充（启发式，必要时手工修正） |
 | `dropBlankRows` | 必须在 `unmerge` 之后判定；被前向填过的行不算空行 |
 | 表名重命名 | 只去首尾空格/连字符/点，不会误删中文 |

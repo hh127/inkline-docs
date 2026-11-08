@@ -1,6 +1,6 @@
 ---
 title: "安装 · WPS 加载项"
-description: "用源码把智算墨斗 4.67 官方 JS 加载项部署到本机 WPS 表格，并验证功能区与事件桥生效。"
+description: "用源码把智算墨斗 4.67 官方 JS 加载项部署到本机 WPS 表格，并验证功能区与自动记录生效。"
 ---
 
 # 安装 · WPS 加载项
@@ -9,6 +9,12 @@ description: "用源码把智算墨斗 4.67 官方 JS 加载项部署到本机 W
 
 ::: tip 预计时间
 10～15 分钟，其中大部分时间花在「完全退出 WPS 再重启」上。
+:::
+
+::: warning 本页要敲几条命令（不会命令也能照抄）
+4.67 版目前没有现成安装包，需要按本页从源码「打包」并注册。建议请单位 IT / 管理员操作；
+如果你自己动手，**命令可以整行复制**，每步都写了「成功的样子」，照着核对即可。
+不想自己装：把[部署运维](/deploy/)转给负责部署的同事。
 :::
 
 ## 前置条件
@@ -39,8 +45,8 @@ cd SmartQuant-InkLine/wps-js-plugin
 node build.js
 ```
 
-作用：把 `js/` 下 16 个模块按固定 `ORDER` 拼接成 `dist/zsmd-all.js`，并同步一份到 `addon/zsmd-all.js`。
-成功标志：两个文件时间戳更新，大小一致。
+作用：**打包**。把 `js/` 下 16 个代码文件按固定顺序拼成一个 `dist/zsmd-all.js`，并复制一份到 `addon/zsmd-all.js`（WPS 实际加载的就是这个文件）。
+成功标志：终端打印 `已构建` 与 `已同步`，两个文件时间戳更新、大小一致。
 
 ## 步骤 3：注册加载项（写 `publish.xml`）
 
@@ -62,7 +68,9 @@ node addon/install-publish.js
 <jspluginonline url="http://127.0.0.1:3888/" name="智算墨斗" type="et" enable="enable_dev" install="null" />
 ```
 
-- `url` 指向本地静态服务（WPS 不支持 `file://`，必须是 http）；
+`publish.xml` 相当于给 WPS 的一张**「登记表」**：告诉它去哪里加载这个插件。上面这段的含义：
+
+- `url` 指向本机上的静态服务地址（WPS 不支持直接读本地文件，必须走 http）；
 - `type="et"` 表示 WPS 表格；
 - `enable="enable_dev"` 是开发者模式加载。
 
@@ -78,7 +86,9 @@ node addon/install-publish.js
 node addon/server.js 3888
 ```
 
-保持这个窗口**持续运行**（关掉窗口 = 加载项失效，WPS 会加载不到 `ribbon.xml` 与 bundle）。
+这行命令会在本机跑一个**小型文件服务**，专门把插件文件提供给 WPS 读取（`3888` 是它占用的「端口」，相当于房间号）。
+保持这个窗口**持续运行**：关掉窗口 = 加载项失效，WPS 会加载不到功能区定义与打包文件。
+想换房间号（端口被占用时）：`node addon/server.js 3890`，同时步骤 3 的地址也要改成 `3890`。
 
 验证服务：
 
@@ -116,7 +126,7 @@ Get-Process wps,wpscloudsvr -ErrorAction SilentlyContinue | Stop-Process -Force
 
 ### 单元格函数 `=Z.JS()`
 
-加载项还会注册工作表函数（命名空间固定为 `Z`）：
+加载项还会注册工作表函数（函数名前缀固定为 `Z`）：
 
 ```
 =Z.JS("3.5*2")              → 7
@@ -124,7 +134,7 @@ Get-Process wps,wpscloudsvr -ErrorAction SilentlyContinue | Stop-Process -Force
 =Z.JS("3.5*(2+1)-【损耗】5%") → 10.45
 ```
 
-若结果显示 `#NAME?` 或 `#VALUE!`，分别见[常见问题](/guide/faq.html)与[自定义函数开发](/dev/custom-function-dev.html)（报错不一定是安装失败，多数是函数契约问题）。
+若结果显示 `#NAME?` 或 `#VALUE!`，分别见[常见问题](/guide/faq.html)（报错不一定是安装失败，多数是算式写法或配置问题，按那两条逐项核对即可）。
 
 ## 更新 / 卸载
 

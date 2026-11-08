@@ -1,6 +1,6 @@
 ---
 title: "单元格函数 =Z.JS()"
-description: "在 WPS 单元格里直接对算式字符串求值：命名空间 Z、中文清洗、Range 引用与返回值契约。"
+description: "在 WPS 单元格里直接对算式字符串求值：函数前缀 Z、中文清洗、Range 引用与返回结果格式。"
 ---
 
 # 单元格函数 `=Z.JS()`
@@ -16,7 +16,7 @@ WPS JS 加载项 4.67 ✅（需官方加载项）｜ Excel VBA 4.66 使用 `JS()
 
 ## 用法
 
-在单元格里直接输入（命名空间 `Z` **必须带**）：
+在单元格里直接输入（前面的 `Z.` **必须带**）：
 
 ```
 =Z.JS("3.5*2")                       → 7
@@ -34,17 +34,17 @@ WPS JS 加载项 4.67 ✅（需官方加载项）｜ Excel VBA 4.66 使用 `JS()
 
 ## 前置条件
 
-1. 已按[安装（WPS）](/guide/install-wps.html)部署**官方加载项**（JS 宏编辑器形态不支持单元格 UDF）；
+1. 已按[安装（WPS）](/guide/install-wps.html)部署**官方加载项**（WPS 的「JS 宏」编辑器和加载项不是一回事，宏模式不支持单元格函数，需用官方加载项）；
 2. 加载项已注册自定义函数（`wps.AddCustomFunction("Z", "JS", JS)` 执行成功）；
 3. 改动后**完全退出所有 WPS 进程**再打开（有缓存）。
 
-## 实现与契约（开发者）
+## 实现与格式（开发者）
 
 | 文件 | 作用 |
 | --- | --- |
 | `addon/js/functions.js` | `@customfunction` 标注的 `JS()` 实现：Range 二维数组解包、复用 `ZSMD.Calc.JS` 求值、`String()` 返回、全局挂载 |
 | `addon/manifest.xml` | `<Functions><Namespace>Z</Namespace></Functions>`，与注册首参一致 |
-| `addon/functions.json` | 官方函数描述；**`result.type` 必须是 `any`**（写 `number` 会因 C++ 宿主强转而报 `#VALUE!`）；可选参数 `skipSymbol` 标 `"optional": true` |
+| `addon/functions.json` | 官方函数描述；**`result.type` 必须是 `any`**（写成 `number` 时平台会强行把结果转成数字，算不出来就报 `#VALUE!`）；可选参数 `skipSymbol` 标 `"optional": true` |
 | `addon/index.html` | 引入 `./js/functions.js` |
 
 详细开发与踩坑见[自定义函数开发](/dev/custom-function-dev.html)。
@@ -58,7 +58,7 @@ WPS JS 加载项 4.67 ✅（需官方加载项）｜ Excel VBA 4.66 使用 `JS()
 | `#错误:[文本]` | 清洗后仍无法求值 | 检查算式；看返回文本里清洗后的内容定位非法字符 |
 | 引用单元格为空 | 引用内容为空或非算式 | 确认引用格有内容 |
 
-> `#NAME? → #VALUE!` 是**进步信号**：说明函数已注册，只剩返回值契约问题。
+> 两种报错的区别：`#NAME?` 是「根本不认识这个函数」（多半没装好或没写 `Z.` 前缀）；`#VALUE!` 是「认识了，但结果没法写成单元格的值」——后者说明加载基本成功，往算式和配置上找原因。
 
 ## 结果与判定
 
@@ -68,8 +68,8 @@ WPS JS 加载项 4.67 ✅（需官方加载项）｜ Excel VBA 4.66 使用 `JS()
 
 ## 边界与注意事项
 
-- 仅 **WPS 官方加载项**形态支持；WPS 的 JS 宏编辑器（`Application` 宿主）不支持单元格 UDF，已实测确认；
-- 函数名固定为 `JS`、命名空间固定为 `Z`（WPS 机制限制，4 字符已是最短命名空间）；
+- 仅 **WPS 官方加载项**形态支持；WPS 的「JS 宏」编辑器环境不支持单元格函数，已实测确认；
+- 函数名固定为 `JS`、前缀固定为 `Z`（WPS 机制限制，`Z` 已是最短的前缀）；
 - 依赖加载项常驻：加载项被停用/服务关闭后，已有公式可能显示错误；
 - 计算仍受工作簿计算模式影响（手动计算时需触发重算）。
 
