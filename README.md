@@ -3,8 +3,9 @@
 智算墨斗（SmartQuant InkLine）的官方文档网站，独立仓库，基于 **VuePress 2** 构建，部署到 GitHub Pages。
 
 - 产品主仓库：[`hh127/SmartQuant-InkLine`](https://github.com/hh127/SmartQuant-InkLine)
+- 在线站点：<https://hh127.github.io/inkline-docs/>
 - 站点结构：产品介绍 / 快速开始 / 使用指南 / 功能详解 / 部署运维 / 架构开发 / 版本更新 / 关于
-- 当前状态：**M0 脚手架完成**（70 页骨架、导航侧栏、搜索、Mermaid、内容自检、Pages 流水线）
+- 当前状态：**v1.0 内容完成**（70 页全站正文、导航侧栏、搜索、Mermaid、内容自检与 Pages 流水线）
 
 ## 本地开发
 
@@ -24,16 +25,20 @@ npm run docs:check    # 内容自检：死链 / frontmatter / 图片体积 / 敏
 docs/
 ├── .vuepress/            # 站点配置、品牌样式、静态资源
 ├── README.md             # 首页
-├── guide/                # 快速开始与使用指南
-├── features/             # 功能详解（12 篇）
-├── deploy/               # 部署与排障
-├── dev/                  # 架构与开发（模块参考、踩坑专栏）
-├── changelog/            # 版本更新与版本口径
-└── about/                # 关于 / 许可证 / 外链
+├── guide/                # 快速开始与使用指南（8 篇）
+├── features/             # 功能详解（13 篇）
+├── deploy/               # 部署与排障（5 篇）
+├── dev/                  # 架构与开发（35 篇：导览 5、踩坑 7、模块参考 17 等）
+├── changelog/            # 版本更新与版本口径（4 篇）
+└── about/                # 关于 / 许可证 / 外链（3 篇）
 ```
 
-各页面当前为占位页，内容按《智算墨斗-VuePress文档站规划》的页面清单推进：
-P0（v1.0 上线必需）→ P1（两周内补齐）→ P2（模块参考等可选页面）。
+内容已按规划的页面清单补齐（P0 → P1 → P2 全部完成），每页含 `title` / `description`，
+功能页标注「适用形态」，开发者页给出源码路径。后续维护：
+
+- 产品发版时同步更新首页 `version` 与 `changelog/`，`npm run docs:check` 会校验版本一致性；
+- 新增或改名的页面同步更新 `docs/.vuepress/config.ts` 的侧边栏；
+- 发现内容与源码漂移时，以源码为准并提 issue/PR。
 
 ## 部署（GitHub Pages）
 
@@ -55,4 +60,7 @@ P0（v1.0 上线必需）→ P1（两周内补齐）→ P2（模块参考等可�
 
 ## 许可证
 
-站点代码与文档内容的授权方式待定（建议：代码 MIT / 文档 CC BY 4.0）。
+- 站点代码：MIT
+- 文档内容：随本站仓库以 MIT 方式提供，可自由引用与改编，请保留出处链接
+- 说明：仓库尚未附 `LICENSE` 全文文件，正式对外分发前需补齐；以产品仓库 README 的 MIT 徽章与
+  [`about/license`](docs/about/license.md) 页面口径为准。
