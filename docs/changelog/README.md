@@ -22,8 +22,8 @@ version: "4.67.0"
 
 ## 版本列表
 
-- [4.67（WPS JS 主线）](/changelog/v4.67.html) — 当前主线，变更记录整理中
-- [4.66（VBA 冻结版）](/changelog/v4.66.html) — 最后一个 VBA 制品版本
+- [4.67（WPS JS 主线）](/changelog/v4.67.html) — 当前主线：能力集合、修复、性能与破坏性变更
+- [4.66（VBA 冻结版）](/changelog/v4.66.html) — 最后一个 VBA 制品版本与冻结口径
 - [历史版本对照](/changelog/archive.html) — 标签、制品与文档口径对照
 
 ## 维护规则
