@@ -51,6 +51,29 @@ docs/
 
 自定义域名时：设置 `DOCS_HOSTNAME`（SEO / sitemap 用），并把 `DOCS_BASE` 改为 `/`。
 
+## 部署（Vercel）
+
+仓库根目录的 `vercel.json` 已把构建参数写死，**导入仓库即可，无需在面板里改设置**：
+
+| 配置项 | 值 |
+| --- | --- |
+| Framework Preset | Other（`framework: null`） |
+| Install Command | `npm ci` |
+| Build Command | `npm run docs:build` |
+| Output Directory | `docs/.vuepress/dist` |
+| Node.js | 20 及以上（跟随 `engines`） |
+
+两种接入方式：
+
+1. **网页导入**：<https://vercel.com/new> → 选 `hh127/inkline-docs` → Deploy。之后每次 push 到 `main` 自动部署，PR 生成预览站。
+2. **CLI**：`npx vercel@latest --prod`（首次会引导登录并关联项目）。
+
+要点：
+
+- **不需要**设置 `DOCS_BASE`：Vercel 部署在根路径，默认 `base: '/'` 即为正确值（GitHub Pages 才需要 `/仓库名/`）。
+- **不需要**设置 `DOCS_HOSTNAME`：`config.ts` 会读取 Vercel 注入的 `VERCEL_PROJECT_PRODUCTION_URL` 自动拼出 sitemap 与 SEO 的绝对地址；绑定自定义域名后会随之变化。
+- 保留 `github.io` 与 Vercel 双站并行没有问题，两边是同一份 `main` 构建产物，仅 `base`/`hostname` 不同。
+
 ## 内容规范（重要）
 
 - 每页必须有 `title` 与 `description` frontmatter（首页与 404 除外）。

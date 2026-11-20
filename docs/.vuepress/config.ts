@@ -14,7 +14,17 @@ import { markdownChartPlugin } from '@vuepress/plugin-markdown-chart'
  * 仅需额外加：本地搜索、Mermaid 图表。
  */
 const base = process.env.DOCS_BASE || '/'
-const hostname = process.env.DOCS_HOSTNAME || 'https://hh127.github.io/inkline-docs/'
+
+/**
+ * hostname 用于 SEO / sitemap 的绝对地址，优先级：
+ * 1. DOCS_HOSTNAME（显式指定，GitHub Actions 用这个）
+ * 2. Vercel 注入的域名（生产 / 预览），部署到 Vercel 时无需手工配置
+ * 3. GitHub Pages 项目页地址（兜底）
+ */
+const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL
+const hostname =
+  process.env.DOCS_HOSTNAME ||
+  (vercelHost ? `https://${vercelHost}/` : 'https://hh127.github.io/inkline-docs/')
 
 const guideSidebar = [
   '/guide/README.md',
