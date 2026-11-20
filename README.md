@@ -71,8 +71,27 @@ docs/
 要点：
 
 - **不需要**设置 `DOCS_BASE`：Vercel 部署在根路径，默认 `base: '/'` 即为正确值（GitHub Pages 才需要 `/仓库名/`）。
-- **不需要**设置 `DOCS_HOSTNAME`：`config.ts` 会读取 Vercel 注入的 `VERCEL_PROJECT_PRODUCTION_URL` 自动拼出 sitemap 与 SEO 的绝对地址；绑定自定义域名后会随之变化。
-- 保留 `github.io` 与 Vercel 双站并行没有问题，两边是同一份 `main` 构建产物，仅 `base`/`hostname` 不同。
+- sitemap 与 og:url 的域名由 `config.ts` 自动推导：`DOCS_HOSTNAME` > Vercel 注入的 `VERCEL_PROJECT_PRODUCTION_URL`/`VERCEL_URL` > 主域名，**通常无需手工配置**。
+- `github.io` 与 Vercel 双站共用同一份 `main` 产物，只是 `base` 不同；主站以 Vercel 自定义域名为准。
+
+### 自定义域名：inkline.mrlining.cn
+
+`config.ts` 中 `CANONICAL_HOSTNAME` 已固定为 `https://inkline.mrlining.cn/`，**每一页都会注入 `<link rel="canonical">` 指向该域名的对应路径**，因此 `github.io`、`*.vercel.app`、自定义域名三个入口不会被视为重复站点。
+
+接入步骤：
+
+1. **DNS**（域名解析在腾讯云 EdgeOne / DNSPod）：添加记录
+   | 主机记录 | 类型 | 记录值 |
+   | --- | --- | --- |
+   | `inkline` | `CNAME` | `cname.vercel-dns.com` |
+
+   不要动根域 `mrlining.cn` 现有的 CNAME/A 与 MX，邮箱与现有网站不受影响。
+2. **Vercel** → 项目 → Settings → Domains → 添加 `inkline.mrlining.cn`，按提示等待证书签发（自动 HTTPS）。
+3. 设为 **Primary domain**，`*.vercel.app` 保留作为备用入口即可（canonical 已指向主域名，无需额外 301）。
+
+> 注意：`hostname` 是**构建期**写入产物的，绑定域名后必须重新部署一次（Deployments → Redeploy，不要用缓存），否则旧的 sitemap/robots 仍写旧地址。
+
+> 已知小瑕疵：GitHub Pages 项目页（`base=/inkline-docs/`）下，`@vuepress/plugin-sitemap` 生成的 `robots.txt` 中 `Sitemap:` 行会把 base 拼两次（`/inkline-docs/inkline-docs/sitemap.xml`）。这是插件对 project pages 的既有行为，`sitemap.xml` 正文的 `<loc>` 是正确的；主站走 Vercel（`base=/`）不受影响。
 
 ## 内容规范（重要）
 

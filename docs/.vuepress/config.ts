@@ -21,10 +21,22 @@ const base = process.env.DOCS_BASE || '/'
  * 2. Vercel 注入的域名（生产 / 预览），部署到 Vercel 时无需手工配置
  * 3. GitHub Pages 项目页地址（兜底）
  */
+/**
+ * 权威站点地址（自定义域名）：canonical 恒指向它，
+ * 使 github.io 与 *.vercel.app 两套产物都不被当成独立站点重复收录。
+ */
+const CANONICAL_HOSTNAME = 'https://inkline.mrlining.cn/'
+
+/**
+ * hostname 用于 sitemap / og:url 等绝对地址，按部署平台取值：
+ * 1. DOCS_HOSTNAME（显式指定，GitHub Actions 用它指向 Pages 地址，已含协议）
+ * 2. Vercel 注入的生产/预览域名（只给主机名，需补协议）
+ * 3. 兜底：主域名
+ */
 const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL
 const hostname =
   process.env.DOCS_HOSTNAME ||
-  (vercelHost ? `https://${vercelHost}/` : 'https://hh127.github.io/inkline-docs/')
+  (vercelHost ? `https://${vercelHost}/` : CANONICAL_HOSTNAME)
 
 const guideSidebar = [
   '/guide/README.md',
@@ -130,6 +142,16 @@ export default defineUserConfig({
     ['link', { rel: 'icon', href: '/images/logo.svg', type: 'image/svg+xml' }],
     ['meta', { name: 'keywords', content: '工程造价,结算审计,Excel插件,WPS加载项,工程量清单,审计追踪,算量核对' }],
   ],
+  /**
+   * 每页注入 canonical，指向主域名下的对应路径。
+   * 站点可能同时存在 github.io / *.vercel.app / 自定义域名三个入口，
+   * canonical 让搜索引擎只收录主域名这一份。
+   */
+  extendsPage: (page) => {
+    const canonical = new URL(page.path.replace(/^\/+/, ''), CANONICAL_HOSTNAME).href
+    page.frontmatter.head ??= []
+    page.frontmatter.head.push(['link', { rel: 'canonical', href: canonical }])
+  },
   bundler: viteBundler(),
   pagePatterns: ['**/*.md', '!node_modules', '!internal/**'],
   theme: defaultTheme({
